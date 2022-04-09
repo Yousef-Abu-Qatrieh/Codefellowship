@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Song</title>
+    <link th:href="@{/css/style.css}" rel="stylesheet"/>
+</head>
+
+<body>
+<h1>My Song List</h1>
+
+<form action="/addSong" method="post">
+    <p>Title</p><input type="text" name="title">
+    </br>
+
+    <p>Length</p><input type="text" name="length">
+    </br>
+    <p>Tracker Number</p><input type="text" name="trackerNumber">
+    </br>
+    </br>
+    <button type="submit">submit</button>
+</form>
+<ul th:each="mySongList: ${mySongList}">
+    <p>ID</p><span th:text="${mySongList.id}"></span>
+    <p>Title</p><span th:text="${mySongList.title}"></span>
+    <p>Length</p><span th:text="${mySongList.length}"></span>
+    <p>Tracker Number</p><span th:text="${mySongList.trackerNumber}"></span>
+
+
+    <p>**********************************************************</p>
+
+
+
+
+
+
+
+</ul>
+
+</body>
+</html>
