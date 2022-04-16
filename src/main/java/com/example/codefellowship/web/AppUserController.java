@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.Date;
 @Controller
@@ -18,9 +19,15 @@ public class AppUserController {
     @Autowired
     ApplicationUserRepository applicationUserRepository;
 
+    @GetMapping("/")
+    public String getHomePage(){
+        return "index";
+    }
+
     @GetMapping("/login")
     public String getLoginPage(){
-        return "login";
+        return
+                "login";
     }
 
     @GetMapping("/signup")
@@ -34,4 +41,11 @@ public class AppUserController {
         applicationUserRepository.save(applicationUser);
         return "login";
 }
+@GetMapping ("/home")
+        public String getHome(){
+
+        return "home";
+
+}
+
 }
