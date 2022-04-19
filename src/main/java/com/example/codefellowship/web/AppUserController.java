@@ -1,15 +1,19 @@
 package com.example.codefellowship.web;
 
 import com.example.codefellowship.domain.ApplicationUser;
+import com.example.codefellowship.domain.Post;
 import com.example.codefellowship.infrastructure.ApplicationUserRepository;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 @Controller
 public class AppUserController {
@@ -36,16 +40,53 @@ public class AppUserController {
     }
 
     @PostMapping("/signup")
-    public String signupUser(@RequestParam String username, @RequestParam String password, @RequestParam String firstName, @RequestParam String lastName, @RequestParam Date dateOfBirth,@RequestParam String bio){
+    public String signupUser(HttpServletRequest request, Model model, @RequestParam String username, @RequestParam String password, @RequestParam String firstName, @RequestParam String lastName, @RequestParam String dateOfBirth, @RequestParam String bio){
         ApplicationUser applicationUser = new ApplicationUser(username,encoder.encode(password),firstName,lastName,dateOfBirth,bio);
+     model.addAttribute("user",applicationUser);
         applicationUserRepository.save(applicationUser);
-        return "login";
+
+        try {
+            request.login(username,password);
+
+        }catch (ServletException exception){
+            System.out.println(exception.getMessage());
+        }
+        return "redirect:/myprofile";
 }
+
 @GetMapping ("/home")
-        public String getHome(){
+        public String getHome(Model model , Authentication authentication){
+
+    ApplicationUser user= (ApplicationUser) authentication.getPrincipal();
+        model.addAttribute("user",applicationUserRepository.getById((user.getId())));
 
         return "home";
 
 }
+@GetMapping("/myprofile")
+    String getProfile(Model model,Authentication authentication){
+        model.addAttribute("user",authentication.getPrincipal());
+        return "myprofile";
+}
+@GetMapping("/user/{id}")
+    String getprof(Model model, @PathVariable Long id){
+        model.addAttribute("user",applicationUserRepository.getById(id));
+        return "myprofile";
+}
+@GetMapping("/users")
+    String getUsers(Model model){
+        model.addAttribute("users",applicationUserRepository.findAll());
+        return "allusers";
 
+}
+@PostMapping("/post")
+    String addPost(@RequestParam String body,Model model,@RequestParam Long id){
+    Post post=new Post(body);
+    ApplicationUser applicationUser=applicationUserRepository.getById(id);
+    applicationUser.getPosts().add(post);
+    applicationUserRepository.save(applicationUser);
+
+
+        return "redirect:/home";
+}
 }
