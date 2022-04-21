@@ -89,4 +89,26 @@ public class AppUserController {
 
         return "redirect:/home";
 }
+
+@GetMapping("follow_me/{id}")
+    String FollowUser(@PathVariable Long id ,Model model,Authentication authentication){
+        ApplicationUser userLogged= (ApplicationUser) authentication.getPrincipal();
+        ApplicationUser userFromDataBase=applicationUserRepository.getById(userLogged.getId());
+        ApplicationUser userToFollow=applicationUserRepository.getById(id);
+        if (userToFollow.getId()!= userLogged.getId()){
+            userToFollow.getFollower().add(userFromDataBase);
+            userFromDataBase.getFollowingMe().add(userToFollow);
+            applicationUserRepository.save(userToFollow);
+            applicationUserRepository.save(userFromDataBase);
+        }
+        return "redirect:/users";
+}
+
+@GetMapping("/feed")
+    String getPostsFollowinUser(Model model ,Authentication authentication){
+    ApplicationUser userLogged= (ApplicationUser) authentication.getPrincipal();
+    ApplicationUser userFromDataBase=applicationUserRepository.getById(userLogged.getId());
+    model.addAttribute("userPostsIfollowing",userFromDataBase.getFollowingMe());
+    return "feed";
+}
 }

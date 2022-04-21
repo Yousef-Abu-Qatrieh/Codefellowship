@@ -20,7 +20,6 @@
     <ul class="uk-navbar-nav">
       <li class="uk-active"><a href="/home">Home</a></li>
       <li class="uk-active"><a href="/myprofile">Profile</a></li>
-      <li class="uk-active"><a href="/feed">feed</a></li>
 
     </ul>
 
@@ -42,12 +41,14 @@
   <figure class="image is-128x128">
     <img class="is-rounded" src="https://bulma.io/images/placeholders/128x128.png">
   </figure>
-  <div th:each="user:${users}">
-    <div ><a th:href="'/follow_me/'+${user.id}">Follow</a></div>
-  <a th:href="'/user/'+${user.id}">Username:</a><span th:text="${user.username}"></span><br/>
-  <span>Bio:</span><span th:text="${user.bio}"></span><br/>
-    <hr>
+  <div th:each="user:${userPostsIfollowing}">
+
+    <a th:href="'/user/'+${user.id}">Username:</a><span th:text="${user.username}"></span><br/>
+    <div th:each="posts:${user.posts}">
+      <p th:text="${posts.body}"></p>
     </div>
+    <hr>
+      </div>
 
 </div>
 </body>
