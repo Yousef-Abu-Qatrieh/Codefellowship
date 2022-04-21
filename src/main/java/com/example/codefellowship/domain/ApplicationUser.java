@@ -20,6 +20,11 @@ public class ApplicationUser implements UserDetails {
     private String lastName;
     private String dateOfBirth;
     private String bio;
+    @ManyToMany(cascade = CascadeType.ALL , fetch = FetchType.LAZY)
+    @JoinTable(name = "FollowTable",joinColumns = {@JoinColumn(name="followingId")},inverseJoinColumns = {@JoinColumn(name = "followerId")})
+    private List<ApplicationUser> followingMe;
+    @ManyToMany(cascade = CascadeType.ALL , mappedBy ="followingMe",fetch = FetchType.LAZY)
+    private List<ApplicationUser> follower;
     @OneToMany(fetch = FetchType.EAGER,cascade =CascadeType.ALL)
     List<Post> posts;
 
@@ -96,5 +101,21 @@ public class ApplicationUser implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public List<ApplicationUser> getFollowingMe() {
+        return followingMe;
+    }
+
+    public void setFollowingMe(List<ApplicationUser> followingMe) {
+        this.followingMe = followingMe;
+    }
+
+    public List<ApplicationUser> getFollower() {
+        return follower;
+    }
+
+    public void setFollower(List<ApplicationUser> follower) {
+        this.follower = follower;
     }
 }
